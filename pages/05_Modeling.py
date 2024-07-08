@@ -58,7 +58,6 @@ if "default" not in st.session_state:
 
 # End of init stuff
 
-
 # horizontal menu
 selected2 = option_menu(None, [STRINGS.MODELINGTAB1, STRINGS.MODELINGTAB2],
                         icons=['check2-circle', 'gear'],

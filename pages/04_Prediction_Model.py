@@ -57,11 +57,13 @@ elif( selectedOption == STRINGS.UPLOADMODELTEXT ):
 
 
 if loaded_model2 is not None:
-    #st.info(loaded_model2)
+    st.info(loaded_model2)
     with open(os.path.join(STRINGS.FILEPATHMODELS, loaded_model2), 'rb') as f:
         loaded_model = pickle.load(f)
-    #st.info(loaded_model)
+    st.info(loaded_model)
     st.session_state.model = loaded_model
+    #st.write("This is the model")
+    #st.info(st.session_state.model)
 
 
 

@@ -204,8 +204,8 @@ DEPLOYMENTDELETETABLEBUTTONLABEL = "Delete whole Table"
 
 
 DEPLOYMENTSELECTROWSOFCASES = "Available perturbation cases:"
-DEPLOYMENTSELECTROWS = "Select one or mutliple rows by clicking on them. Each selected row represents a perturbation case and is perturbed with chosen perturbation options."
-DEPLOYMENTSELECTCASESTOCONTINUEINFO = "Select cases to continue"
+DEPLOYMENTSELECTROWS = "Select one row by clicking on them. Each selected row represents a perturbation case and is perturbed with chosen perturbation options."
+DEPLOYMENTSELECTCASESTOCONTINUEINFO = "Select a case to continue"
 
 DEPLOYMENTSHOWSELECTEDCASES = "Show selected cases"
 DEPLOYMENTSHOWSELECTEDPOS = "Show chosen Perturbation options"

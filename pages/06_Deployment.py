@@ -625,16 +625,19 @@ try:
 
 
             with st.expander(STRINGS.DEPLOYMENTUPLOADNEW):
-                new_cases = st.file_uploader(STRINGS.DEPLOYMENTUPLAODCSV, type="csv")
-                if new_cases is not None:
-                    file = pd.read_csv(new_cases)
-                    for columns in file:
-                        if st.session_state.level_of_measurement_dic[columns]=="Cardinal":
-                            file[columns] = file[columns].astype(float)
-                        else:
-                            file[columns] = file[columns].astype(str)
+                try:
+                    new_cases = st.file_uploader(STRINGS.DEPLOYMENTUPLAODCSV, type="csv")
+                    if new_cases is not None:
+                        file = pd.read_csv(new_cases)
+                        for columns in file:
+                            if st.session_state.level_of_measurement_dic[columns]=="Cardinal":
+                                file[columns] = file[columns].astype(float)
+                            else:
+                                file[columns] = file[columns].astype(str)
 
-                    st.session_state.df_aggrid_beginning = file
+                        st.session_state.df_aggrid_beginning = file
+                except Exception as e:
+                    st.error(e)
 
 
 
@@ -738,31 +741,64 @@ try:
                     st.session_state.perturbedList = dict()
 
                 # divide df based on level of measurement
-                nominal = [key for key, value in st.session_state.level_of_measurement_dic.items() if value == 'Nominal']
-                ordinal = [key for key, value in st.session_state.level_of_measurement_dic.items() if value == 'Ordinal']
-                cardinal = [key for key, value in st.session_state.level_of_measurement_dic.items() if value == 'Cardinal']
+                #nominal = [key for key, value in st.session_state.level_of_measurement_dic.items() if value == 'Nominal']
+                #ordinal = [key for key, value in st.session_state.level_of_measurement_dic.items() if value == 'Ordinal']
+                #cardinal = [key for key, value in st.session_state.level_of_measurement_dic.items() if value == 'Cardinal']
 
-                ct = ColumnTransformer(transformers=[
-                    ("OneHot", OneHotEncoder(handle_unknown='ignore'), nominal),
-                    ("Ordinal", OrdinalEncoder(handle_unknown='error'), ordinal),
-                    ("Cardinal", SimpleImputer(strategy='most_frequent'), cardinal)],
-                    remainder='drop', verbose_feature_names_out=False)
+                #ct = ColumnTransformer(transformers=[
+                #    ("OneHot", OneHotEncoder(handle_unknown='ignore'), nominal),
+                #    ("Ordinal", OrdinalEncoder(handle_unknown='error'), ordinal),
+                #    ("Cardinal", SimpleImputer(strategy='most_frequent'), cardinal)],
+                #    remainder='drop', verbose_feature_names_out=False)
 
                 df = pd.DataFrame.from_dict(st.session_state.unique_values_dict, orient='index')
                 df = df.transpose()
+
+                #with st.expander("selected_rows_DF"):
+                #    st.write(selected_rows_DF.copy())
+
                 x = pd.concat([df, selected_rows_DF]).reset_index(drop=True)
+
+                #with st.expander("x"):
+                #    st.write(x.copy())
+
                 x = x.fillna(method='ffill')
 
-                try:
-                    x_trans_df = pd.DataFrame(ct.fit_transform(x).toarray(), columns=ct.get_feature_names_out()).reset_index(drop=True)
-                except:
-                    x_trans_df = pd.DataFrame(ct.fit_transform(x), columns=ct.get_feature_names_out()).reset_index(drop=True)
+                #with st.expander("x"):
+                #    st.write(x.copy())
 
-                y_pred = pd.DataFrame(st.session_state.model.predict(x_trans_df))
+                #try:
+                #    x_trans_df = pd.DataFrame(ct.fit_transform(x).toarray(), columns=ct.get_feature_names_out()).reset_index(drop=True)
+                #except:
+                #    x_trans_df = pd.DataFrame(ct.fit_transform(x), columns=ct.get_feature_names_out()).reset_index(drop=True)
+
+                #with st.expander("x_trans_df"):
+                #    st.write(x_trans_df.copy())
+
+
+                #st.info("This is the model")
+                #st.info(st.session_state.model)
+                #st.info(x_trans_df)
+                #y_pred = pd.DataFrame(st.session_state.model.predict(x_trans_df))
+
+                #with st.expander("y_pred"):
+                #    st.write(y_pred.copy())
+
+                #####
+                newPrediction = pd.DataFrame(st.session_state.model.predict(selected_rows_DF.copy()))
+                #with st.expander("newPrediction"):
+                #    st.write(newPrediction.copy())
+
+                y_pred = newPrediction
+                #####
 
                 result = selected_rows_DF
                 # reset index for y_pred in order to be able to insert it to result
-                result["prediction"] = y_pred.iloc[len(df):].reset_index(drop=True)
+                #SSresult["prediction"] = y_pred.iloc[len(df):].reset_index(drop=True)
+                result["prediction"] = y_pred
+
+                #with st.expander("ResultWithPrediction"):
+                #    st.write(result.copy())
 
                 # change values in selected rows to list in order to extend the list with perturbated values
                 # this is done because we need to explode it later
@@ -857,7 +893,6 @@ try:
                                                     st.error(f"Value of **{column}** outside of bin range. Change value or create new bins.")
 
 
-
                                             elif algorithm_keys == 'Perturb in order':
                                                 try:
 
@@ -868,10 +903,8 @@ try:
                                                                            column]))
 
 
-
                                                 except Exception as e:
                                                     st.write(e)
-
 
                                             elif algorithm_keys == 'Perturb all values':
                                                 perturbedList[algorithm_keys] = (
@@ -894,7 +927,6 @@ try:
                         for column, method in index_perturb[i].items():
                             if method:
                                 # ausgewählte methoden ist ein dictionary mit der methode als key und perturbated values als value
-
                                 # für jede ausgwählte row in aggrid gebe ein dictionary mit key = column und value = values aus
                                 for method_name, perturbed_values in method.items():
 
@@ -907,9 +939,13 @@ try:
                 except Exception as e:
                     st.empty(e)
 
+                #with st.expander("result_df"):
+                #    st.write(result_df.copy())
+                #result_df.to_csv('result_df.csv')
                 # insert predictions of case into perturbed cases
                 result_df["prediction"] = result["prediction"]
-
+                #with st.expander("result_df"):
+                #    st.write(result_df.copy())
                 try:
                     # prio and selected
                     for x in st.session_state.perturb_mode_values[::-1]:
@@ -922,49 +958,72 @@ try:
                 except Exception as e:
                     st.write(e)
 
-                # delete duplicate rows in order to prevent multiple same perturbations
+                #with st.expander("result_df after Explode"):
+                #    st.write(result_df.copy())
 
+                # delete duplicate rows in order to prevent multiple same perturbations
                 result_df = result_df.drop_duplicates(keep='first')
 
+                # remove the prediction column
+                result_df.drop(result_df.columns[len(result_df.columns) - 1], axis=1, inplace=True)
 
                 result_df["Case"] = result_df.index
+
+                caseColumn = result_df["Case"].copy
+
+                # remove the case column
+                result_df.drop(result_df.columns[len(result_df.columns) - 1], axis=1, inplace=True)
+
+                #with st.expander("result_df after Case"):
+                #    st.write(result_df.copy())
 
             except Exception as e:
                 st.info(e)
 
             try:
+                ##############
+                #x = pd.concat([df, result_df.iloc[:, :-1]]).reset_index(drop=True)
+
+                #with st.expander("x 1"):
+                #    st.write(x.copy())
 
 
-                x = pd.concat([df, result_df.iloc[:, :-1]]).reset_index(drop=True)
-                x_filled = x.fillna(method='ffill').copy()
+                #x_filled = x.fillna(method='ffill').copy()
+
+                #for columns in x_filled:
+                #    try:
+                #        if st.session_state.level_of_measurement_dic[columns] == "Cardinal":
+                #            x_filled[columns] = x_filled[columns].astype(float)
+                #        else:
+                #            x_filled[columns] = x_filled[columns].astype(str)
+                #    except:
+                #        pass
+
+                #try:
+                #    x_trans_df = pd.DataFrame(ct.fit_transform(x_filled).toarray(), columns=ct.get_feature_names_out()).reset_index(
+                #    drop=True)
+                #except Exception as e:
+                 #   st.write(e)
+                 #   x_trans_df = pd.DataFrame(ct.fit_transform(x_filled), columns=ct.get_feature_names_out()).reset_index(
+                  #  drop=True)
+                ##############
 
 
-                for columns in x_filled:
-                    try:
-                        if st.session_state.level_of_measurement_dic[columns] == "Cardinal":
-                            x_filled[columns] = x_filled[columns].astype(float)
-                        else:
-                            x_filled[columns] = x_filled[columns].astype(str)
-                    except:
-                        pass
-
-                try:
-                    x_trans_df = pd.DataFrame(ct.fit_transform(x_filled).toarray(), columns=ct.get_feature_names_out()).reset_index(
-                    drop=True)
-                except:
-                    # st.write(e)
-                    x_trans_df = pd.DataFrame(ct.fit_transform(x_filled), columns=ct.get_feature_names_out()).reset_index(
-                    drop=True)
-
+                #with st.expander("result_df after prediction removed"):
+                #    st.write(result_df.copy())
 
                 # get predictions for perturbed cases
-                y_pred = pd.DataFrame(st.session_state.model.predict(x_trans_df))
+                y_pred = pd.DataFrame(st.session_state.model.predict(result_df))
                 # reset index in order to remove rows which were generated for the onehotencoder
-                y_pred = y_pred.iloc[len(df):].reset_index(drop=True)
+                #y_pred = y_pred.iloc[len(df):].reset_index(drop=True)
                 # reset index in order to be able to insert y_pred correctly
                 result_df = result_df.reset_index(drop=True)
                 result_df["prediction"] = y_pred
 
+                #with st.expander("result_df after new prediction"):
+                #    st.write(result_df.copy())
+
+                result_df["Case"] = caseColumn
 
                 try:
                     st.session_state["dfs"] = [value for key, value in result_df.groupby('Case')]
