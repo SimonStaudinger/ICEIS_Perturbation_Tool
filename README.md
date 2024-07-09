@@ -23,7 +23,7 @@ streamlit run Home.py
 which should open the staring page of the tool in your browser. 
 Once you see the starting page in browser, you are set to model your first reliability assessment using a perturbation approach! 
 
-#### Link to the demonstration video 
+#### Link to the demonstration video: 
 https://youtu.be/Z9SrrTKQzO0
 
 
