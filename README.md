@@ -28,7 +28,7 @@ which should open the staring page of the tool in your browser.
 Once you see the starting page in browser, you are set to model your first reliability assessment using a perturbation approach! 
 
 #### Demonstration
-Follwing this link video:https://youtu.be/Z9SrrTKQzO0 you will find a demonstration video showcasing the tool in use.
+Follwing this link https://youtu.be/Z9SrrTKQzO0 you will find a demonstration video showcasing the tool in use.
 
 
 
