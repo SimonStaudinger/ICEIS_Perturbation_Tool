@@ -1,8 +1,6 @@
 ## Hello everyone! 
 
-This repository is intended as documentation of an academic modeling tool for reliability assessment of classification results using a perturbation approach. More information about the general idea can be found here: https://doi.org/10.1007/s42979-024-02892-4.
-
-The code is based on the implementation from Pascal Badzura available at https://github.com/PaBadz/Reliability-Assessment-Thesis.
+This repository is intended as documentation of a tool for reliability assessment of classification results using a perturbation approach. More information about the general idea can be found here: https://doi.org/10.1007/s42979-024-02892-4.
 
 #### Prerequisites
 
@@ -27,8 +25,6 @@ streamlit run Home.py
 which should open the staring page of the tool in your browser. 
 Once you see the starting page in browser, you are set to model your first reliability assessment using a perturbation approach! 
 
-#### Demonstration
-Follwing this link https://youtu.be/Z9SrrTKQzO0 you will find a demonstration video showcasing the tool in use.
 
 
 
