@@ -2,6 +2,8 @@
 
 This repository is intended as documentation of a tool for reliability assessment of classification results using a perturbation approach. More information about the general idea can be found here: https://doi.org/10.1007/s42979-024-02892-4.
 
+The code is based on the implementation from Pascal Badzura available at https://github.com/PaBadz/Reliability-Assessment-Thesis.
+
 #### Prerequisites
 
 The tool needs access to a graph store either installed on your computer or available online. 
